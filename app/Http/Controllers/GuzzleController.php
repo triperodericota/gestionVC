@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+/*require '../../../vendor/autoload.php';*/
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7;
@@ -53,26 +53,23 @@ class GuzzleController extends Controller
     }
 
 
-    public static function doTheRequest($method, $uri, $data=null){
+    public static function requestBonita($method, $uri, $data=[]){
         $response = array();
-
-		try {
+		    try {
             $client = static::getGuzzleClient();
-            $request = $client->request($method, $uri,
+            $response = $client->request($method, $uri,
                     [
                     	'headers' => [
-                        	'X-Bonita-API-Token' => static::$token
+                        	'X-Bonita-API-Token' => static::getToken()
                         ],
-                    	'json' => [
-                    		'contratoCliente' => [
+                    	'json' => $data
+                    		/*'contratoCliente' => [
                      			'dni' => $data['dni'],
                      			'nombre' => $data['nombre'],
                      			'edad' => $data['edad']
-                     			],
-						]
-
+                        ],*/
                     ]);
-
+            return $response;
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
                 $error = Psr7\str($e->getResponse());

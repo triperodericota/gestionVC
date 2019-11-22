@@ -16,3 +16,4 @@ Route::get('/', function () {
 });
 
 Route::get('/solicitudVC','GestionVCController@solicitudVC');
+Route::get('/listaDeProcesos','GestionVCController@listaDeProcesos');
