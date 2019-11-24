@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-/*require '../../../vendor/autoload.php';*/
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7;
@@ -63,11 +62,6 @@ class GuzzleController extends Controller
                         	'X-Bonita-API-Token' => static::getToken()
                         ],
                     	'json' => $data
-                    		/*'contratoCliente' => [
-                     			'dni' => $data['dni'],
-                     			'nombre' => $data['nombre'],
-                     			'edad' => $data['edad']
-                        ],*/
                     ]);
             return $response;
         } catch (RequestException $e) {
