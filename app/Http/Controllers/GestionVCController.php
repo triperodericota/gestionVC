@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use DateTime;
+use DateTime, DateTimeZone;
 
 class GestionVCController extends Controller
 {
@@ -63,13 +63,17 @@ class GestionVCController extends Controller
         //determino si es videoconferencia o comparendo
 
        */
-      $fecha = new DateTime($request->fecha." ".$request->hora);
-      $fecha = $fecha->format('Y-m-d H:i:sP');
+      $fecha = date('Y-m-d', strtotime($request->fecha)); /* sin timezone */
+      /*$fecha = $fecha->format('Y-m-d H:i:s');
+      $fecha = new DateTime($request->fecha, new DateTimeZone('UTC'));
+      echo($fecha->format('Y-m-d')); // tampoco mapea
+      */
       $contrato = ['videoconferenciaInput' => [
           'id_solicitante' => $request->id_solicitante,
           'id_interno' => $request->id_interno,
           'id_unidad' => $request->id_unidad,
           'fecha' => $fecha,
+          'hora' => $request->hora,
           'nro_causa' => $request->nro_causa,
           'motivo' => $request->motivo
           ]];
