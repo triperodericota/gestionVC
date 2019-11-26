@@ -107,12 +107,12 @@ class GestionVCController extends Controller
           'tipo_vc' => $tipo_vc,
           'participantes' => $participantes
           ]];
-
       $response = GuzzleController::requestBonita('POST','API/bpm/userTask/'.$request->id_tarea.'/execution',$contrato);
       echo(var_dump($response));
 
-      $response = GuzzleController::requestBonita('PUT','API/bpm/userTask/'.$request->id_tarea,['state' => 'completed']);
-      echo("chenge state ===>".json_decode($response));
+      $response = GuzzleController::requestBonita('PUT','API/bpm/userTask/'.$request->id_tarea,['state' => 'skipped']);
+      echo("chenge state ===>".var_dump($response));
+
     }
 
     public function posiblesAlternativas()
