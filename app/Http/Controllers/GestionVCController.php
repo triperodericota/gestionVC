@@ -1,4 +1,4 @@
-  <?php
+<?php
 
 namespace App\Http\Controllers;
 
@@ -22,13 +22,8 @@ class GestionVCController extends Controller
         return $usuarios;
     }
 
-    public function solicitudVC(){
-      if (isset($_GET['id'])) {
-    		$idTarea = $_GET['id'];
-        $tarea = $this->obtenerTarea($idTarea);
-    	} else {
-    		$idTarea = "No se paso bien el id";
-    	}
+    private function datosFormularioSolicitud($tarea){
+      $idTarea = $tarea->{"id"};
       $actorId = $tarea->{"actorId"};
       $caseId = $tarea->{"caseId"};
       $userId = $tarea->{"assigned_id"};
@@ -49,8 +44,19 @@ class GestionVCController extends Controller
           $users[$user->{'id'}]=$user;
         }
       }
-    	return view('solicitudVC', ['idTarea' => $idTarea, 'idActor' => $actorId, 'idCase' => $caseId, 'idUser' => $userId,
-       'unidades' => $unidades, 'participantes' => $users]);
+      return ['idTarea' => $idTarea, 'idActor' => $actorId, 'idCase' => $caseId, 'idUser' => $userId, 'unidades' => $unidades, 'participantes' => $users];
+    }
+
+    public function solicitudVC(){
+      if (isset($_GET['id'])) {
+    		$idTarea = $_GET['id'];
+        $tarea = $this->obtenerTarea($idTarea);
+        $datosForm = $this->datosFormularioSolicitud($tarea);
+    	} else {
+    		$idTarea = "No se paso bien el id";
+    	}
+
+    	return view('solicitudVC', $datosForm);
     }
 
     public function listaDeProcesos(){
@@ -105,8 +111,27 @@ class GestionVCController extends Controller
       $response = GuzzleController::requestBonita('POST','API/bpm/userTask/'.$request->id_tarea.'/execution',$contrato);
       echo(var_dump($response));
 
-      $response = GuzzleController::requestBonita('PUT','API/bpm/userTask/'.$request->id_tarea,['state' => 'skipped']);
-      echo(var_dump($response));
+      $response = GuzzleController::requestBonita('PUT','API/bpm/userTask/'.$request->id_tarea,['state' => 'completed']);
+      echo("chenge state ===>".json_decode($response));
+    }
+
+    public function posiblesAlternativas()
+    {
+      if(isset($_GET['id'])){
+        $idTarea = $_GET['id'];
+        $tarea = $this->obtenerTarea($idTarea);
+        $datosForm = $this->datosFormularioSolicitud($tarea);
+    	} else {
+    		$idTarea = "No se paso bien el id";
+    	}
+
+      $caseId = $datosForm['caseId'];
+      /* obtengo las posibles alternativas */
+      $response = GuzzleController::requestBonita('GET','API/bpm/caseVariable/'.$caseId.'/alternativas');
+      echo(json_decode($response));
+
+
+
     }
 
 

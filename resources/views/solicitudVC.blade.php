@@ -50,7 +50,7 @@
                                   <label for="participante1">Participante 1</label>
                                   <select required class="form-control" id="participante1" name="participante1">
                                     @foreach ($participantes as $participante):
-                                        <option value="{{ $participante->{'id'} }}" name="{{ $participante->{'id'} }}">{{ $participante->{'lastname'} , $participante->{'firstname'} }}</option>
+                                        <option value="{{ $participante->{'id'} }}" name="{{ $participante->{'id'} }}">{{ $participante->{'lastname'} }}</option>
                                     @endforeach
                                   </select>
                               </div>
@@ -58,7 +58,7 @@
                                   <label for="participante2">Participante 2</label>
                                   <select required class="form-control" id="participante2" name="participante2">
                                     @foreach ($participantes as $participante):
-                                        <option value="{{ $participante->{'id'} }}" name="{{ $participante->{'id'} }}">{{ $participante->{'lastname'} , $participante->{'firstname'} }}</option>
+                                        <option value="{{ $participante->{'id'} }}" name="{{ $participante->{'id'} }}">{{ $participante->{'lastname'} }}</option>
                                     @endforeach
                                   </select>
                               </div>
@@ -66,7 +66,7 @@
                                   <label for="participante3">Participante 3</label>
                                   <select required class="form-control" id="participante3" name="participante3">
                                     @foreach ($participantes as $participante):
-                                      <option value="{{ $participante->{'id'} }}" name="{{ $participante->{'id'} }}">{{ $participante->{'lastname'} , $participante->{'firstname'} }}</option>
+                                      <option value="{{ $participante->{'id'} }}" name="{{ $participante->{'id'} }}">{{ $participante->{'lastname'} }}</option>
                                     @endforeach
                                   </select>
                               </div>
