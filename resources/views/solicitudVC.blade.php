@@ -47,13 +47,27 @@
                                 <textarea required class="form-control" id="motivo" name="motivo" rows="3"></textarea>
                               </div>
                               <div class="form-group">
-                                  <label for="participante1">Participante 1</label> <!-- pasarle un array o list con los Participantes y que lo itere acá -->
-                                  <select required class="form-control" id="participante1">
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
+                                  <label for="participante1">Participante 1</label>
+                                  <select required class="form-control" id="participante1" name="participante1">
+                                    @foreach ($participantes as $participante):
+                                        <option value="{{ $participante->{'id'} }}" name="{{ $participante->{'id'} }}">{{ $participante->{'lastname'} , $participante->{'firstname'} }}</option>
+                                    @endforeach
+                                  </select>
+                              </div>
+                              <div class="form-group">
+                                  <label for="participante2">Participante 2</label>
+                                  <select required class="form-control" id="participante2" name="participante2">
+                                    @foreach ($participantes as $participante):
+                                        <option value="{{ $participante->{'id'} }}" name="{{ $participante->{'id'} }}">{{ $participante->{'lastname'} , $participante->{'firstname'} }}</option>
+                                    @endforeach
+                                  </select>
+                              </div>
+                              <div class="form-group">
+                                  <label for="participante3">Participante 3</label>
+                                  <select required class="form-control" id="participante3" name="participante3">
+                                    @foreach ($participantes as $participante):
+                                      <option value="{{ $participante->{'id'} }}" name="{{ $participante->{'id'} }}">{{ $participante->{'lastname'} , $participante->{'firstname'} }}</option>
+                                    @endforeach
                                   </select>
                               </div>
                             </div>

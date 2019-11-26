@@ -1,4 +1,4 @@
-<?php
+  <?php
 
 namespace App\Http\Controllers;
 
@@ -13,6 +13,15 @@ class GestionVCController extends Controller
       return DB::connection()->getPdo();
     }
 
+    private function obtenerUsuarios(){
+        /*
+        traigo los roles con /API/identity/role?p=0&c=100&o=displayName ASC
+        */
+        $response = GuzzleController::requestBonita('GET','API/identity/user?p=0&c=10');
+        $usuarios = json_decode($response->getBody());
+        return $usuarios;
+    }
+
     public function solicitudVC(){
       if (isset($_GET['id'])) {
     		$idTarea = $_GET['id'];
@@ -22,7 +31,7 @@ class GestionVCController extends Controller
     	}
       $actorId = $tarea->{"actorId"};
       $caseId = $tarea->{"caseId"};
-      $userId = $tarea->{"executedBy"};
+      $userId = $tarea->{"assigned_id"};
 
       /* sql para buscar unidades */
       $db = $this->getDB();
@@ -33,7 +42,15 @@ class GestionVCController extends Controller
       /* obtener posibles Participantes
         $response = GuzzleController::requestBonita('GET', 'API/bpm/actorMember?p=0&c=10&f=actor\_id%3d1&f=member\_type%3duser')
       */
-    	return view('solicitudVC', ['idTarea' => $idTarea, 'idActor' => $actorId, 'idCase' => $caseId, 'idUser' => $userId, 'unidades' => $unidades]);
+      $participantes=array();
+      $users = $this->obtenerUsuarios();
+      foreach ($users as $user) {
+        if(($user->{'job_title'} == 'Procurador') || ($user->{'job_title'} == 'Juez') || ($user->{'job_title'} == 'Abogado')) {
+          $users[$user->{'id'}]=$user;
+        }
+      }
+    	return view('solicitudVC', ['idTarea' => $idTarea, 'idActor' => $actorId, 'idCase' => $caseId, 'idUser' => $userId,
+       'unidades' => $unidades, 'participantes' => $users]);
     }
 
     public function listaDeProcesos(){
@@ -49,40 +66,47 @@ class GestionVCController extends Controller
       $uri = 'API/bpm/userTask/'.$id;
       $response = GuzzleController::requestBonita('GET',$uri);
       $tarea = json_decode($response->getBody());
-      /* PREGUNTAR: siempre tira executedBy=0 siendo una tarea humnana */
       return $tarea;
 
     }
 
     public function enviarDatosSolicitudVC(Request $request){
-      /* sql para buscar Participantes segun el nombre  */
+      $participantes=[ "id_participante1" => $request->participante1, "id_participante2" => $request->participante2, "id_participante3" => $request->participante3];
+      /*$participantes = array_map('strval',$participantes);*/
 
-      /* segun el id_solicitante determinar tipo de tarea */
-      /* recupero informacion del usuario
-        $response = GuzzleController::requestBonita('GET','/API/identity/professionalcontactdata/'.$request->>id_solicitante);
-        //determino si es videoconferencia o comparendo
+      /* recupero informacion del usuario */
+      $response = GuzzleController::requestBonita('GET','API/identity/user/'.$request->id_solicitante.'?d=professional_data');
+      $solicitante = json_decode($response->getBody());
+      //determino si es videoconferencia o comparendo
+      if($solicitante->{'job_title'} == 'Juez'){
+        $tipo_vc = "Comparendo";
+      }else{
+        $tipo_vc = "Entrevista";
+      }
 
-       */
       $fecha = date('Y-m-d', strtotime($request->fecha)); /* sin timezone */
       /*$fecha = $fecha->format('Y-m-d H:i:s');
       $fecha = new DateTime($request->fecha, new DateTimeZone('UTC'));
       echo($fecha->format('Y-m-d')); // tampoco mapea
       */
+      echo(var_dump($request));
       $contrato = ['videoconferenciaInput' => [
-          'id_solicitante' => $request->id_solicitante,
-          'id_interno' => $request->id_interno,
-          'id_unidad' => $request->id_unidad,
+          'id_solicitante' => intval($request->id_solicitante),
+          'id_interno' => intval($request->id_interno),
+          'id_unidad' => intval($request->id_unidad),
           'fecha' => $fecha,
           'hora' => $request->hora,
-          'nro_causa' => $request->nro_causa,
-          'motivo' => $request->motivo
+          'nro_causa' => intval($request->nro_causa),
+          'motivo' => $request->motivo,
+          'tipo_vc' => $tipo_vc,
+          'participantes' => $participantes
           ]];
 
       $response = GuzzleController::requestBonita('POST','API/bpm/userTask/'.$request->id_tarea.'/execution',$contrato);
       echo(var_dump($response));
-/*
+
       $response = GuzzleController::requestBonita('PUT','API/bpm/userTask/'.$request->id_tarea,['state' => 'skipped']);
-      echo(var_dump($response));*/
+      echo(var_dump($response));
     }
 
 
