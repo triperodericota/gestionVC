@@ -8,6 +8,7 @@
                   <!-- left column -->
                     <div>
                       <p> Id Task:  {{ $idTarea }} </p>
+                      <p> alternativas: {{ $alternativas ?? '' }} </p>
                         <!-- general form elements -->
                         <div class="card card-primary">
                           <div class="card-header">

@@ -18,3 +18,4 @@ Route::get('/', function () {
 Route::get('/solicitudVC','GestionVCController@solicitudVC');
 Route::get('/listaDeProcesos','GestionVCController@listaDeProcesos');
 Route::post('/solicitudVC','GestionVCController@enviarDatosSolicitudVC');
+Route::get('/posiblesAlternativas','GestionVCController@posiblesAlternativas');

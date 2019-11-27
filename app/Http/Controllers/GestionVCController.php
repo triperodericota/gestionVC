@@ -84,7 +84,7 @@ class GestionVCController extends Controller
       $response = GuzzleController::requestBonita('GET','API/identity/user/'.$request->id_solicitante.'?d=professional_data');
       $solicitante = json_decode($response->getBody());
       //determino si es videoconferencia o comparendo
-      if($solicitante->{'job_title'} == 'Juez'){
+      if((isset($solicitante->{'job_title'})) && ($solicitante->{'job_title'} == 'Juez')){
         $tipo_vc = "Comparendo";
       }else{
         $tipo_vc = "Entrevista";
@@ -129,6 +129,8 @@ class GestionVCController extends Controller
       /* obtengo las posibles alternativas */
       $response = GuzzleController::requestBonita('GET','API/bpm/caseVariable/'.$caseId.'/alternativas');
       echo(json_decode($response));
+      $datosForm["alternativas"] = $response;
+      return view('solicitudVC', $datosForm);
 
 
 
