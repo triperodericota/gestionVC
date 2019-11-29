@@ -63,7 +63,7 @@ class GuzzleController extends Controller
                         ],
                     	'json' => $data
                     ]);
-            return $response;
+            return $response->getBody();
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
                 $error = Psr7\str($e->getResponse());
@@ -73,5 +73,9 @@ class GuzzleController extends Controller
 
             return $error;
         }
+    }
+
+    public static function setCaseVariable($idCase,$variableName,$value){
+        return GuzzleController::requestBonita('PUT', "API/bpm/caseVariable/".$idCase."/".$variableName,$value);
     }
 }
