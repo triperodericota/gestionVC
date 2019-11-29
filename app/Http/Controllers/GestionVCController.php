@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use DateTime, DateTimeZone;
 
@@ -81,13 +82,8 @@ class GestionVCController extends Controller
       /* recupero informacion del usuario */
       echo($request->id_solicitante);
       if($request->id_solicitante == null){
-        $tarea = $this->obtenerTarea($request->idTarea);
-        echo($tarea);
-        try{
-          $id_solicitante = $tarea.getBody()->{'executedBy'}; //ARREGLAR ESTO !!!!
-        } catch(FatalThrowableError $e){
-          echo(var_dump($e));
-        }
+        $response = GuzzleController::requestBonita('GET','API/bpm/case/'.$request->id_case);
+        $id_solicitante = $response->{"started_by"};
       }else{
         $id_solicitante = $request->id_solicitante;
       }
@@ -100,7 +96,6 @@ class GestionVCController extends Controller
       }else{
         $tipo_vc = "Entrevista";
       }
-      echo("TIPO VC ===> ".$tipo_vc);
 
       $fecha = date('d/m/Y', strtotime($request->fecha)); /* sin timezone */
       /*$fecha = $fecha->format('Y-m-d H:i:s');
@@ -163,8 +158,39 @@ class GestionVCController extends Controller
       $datosForm["alternativas"] = $response;*/
       return view('solicitudVC', $datosForm);
 
+    }
+
+    private function getVariableValue($caseId,$varName){
+      $variableJson = GuzzleController::requestBonita('API/bpm/caseVariable/'.$caseId."/".$varName);;
+      return $variableJson->{"value"};
+    }
+
+    public function registrarSolicitudVC(){
+      // carga en la base de datos la nueva solicitud de videoconferencias
+      //echo(var_dump($_POST));
+      if(isset($_GET["activityId"])){
+        $activityId = $_GET["activityId"];
+        $response = GuzzleController::requestBonita('GET','API/bpm/activity/'.$activityId);
+        $caseId = $response->{"caseId"};
+
+        $fecha = $this->getVariableValue($caseId,'fecha');
+        $hora = $this->getVariableValue($caseId,'hora');
+        $id_solicitante = $this->getVariableValue($caseId,'id_solicitante');
+        $id_unidad = $this->getVariableValue($caseId,'id_unidad');
+        $id_interno = $this->getVariableValue($caseId,'id_unidad');
+        $nro_causa = $this->getVariableValue($caseId,'nro_causa');
+        $tipo_vc = $this->getVariableValue($caseId,'motivo');
+        $id_participante1 = $this->getVariableValue($caseId,'id_participante1');
+        $id_participante2 = $this->getVariableValue($caseId,'id_participante2');
+        $id_participante3 = $this->getVariableValue($caseId,'id_participante3');
+
+        $tipo_participante =
+
+      }
 
 
+
+      //return view('registrarSolicitudVC');
     }
 
 
