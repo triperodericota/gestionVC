@@ -80,10 +80,10 @@ class GestionVCController extends Controller
       /*$participantes=[ "id_participante1" => $request->participante1, "id_participante2" => $request->participante2, "id_participante3" => $request->participante3];
       /*$participantes = array_map('strval',$participantes);*/
       /* recupero informacion del usuario */
-      echo($request->id_solicitante);
+#      echo($request->id_solicitante);
       if($request->id_solicitante == null){
         $response = GuzzleController::requestBonita('GET','API/bpm/case/'.$request->id_case);
-        $id_solicitante = $response->{"started_by"};
+        $id_solicitante = json_decode($response)->started_by;
       }else{
         $id_solicitante = $request->id_solicitante;
       }
@@ -98,11 +98,14 @@ class GestionVCController extends Controller
       }
 
       $fecha = date('d/m/Y', strtotime($request->fecha)); /* sin timezone */
+      echo $fecha;
       /*$fecha = $fecha->format('Y-m-d H:i:s');
       $fecha = new DateTime($request->fecha, new DateTimeZone('UTC'));
       echo($fecha->format('Y-m-d')); // tampoco mapea
+
+
 */
-      echo(var_dump($request));
+      #echo(var_dump($request));
 /*      $contrato = ['videoconferenciaInput' => [
           'id_solicitante' => intval($request->id_solicitante),
           'id_interno' => intval($request->id_interno),
@@ -133,12 +136,12 @@ class GestionVCController extends Controller
       GuzzleController::setCaseVariable($request->id_case,"nro_causa",['type' => "java.lang.String", "value" => $request->nro_causa]);
       GuzzleController::setCaseVariable($request->id_case,"tipo_vc",['type' => "java.lang.String", "value" => $tipo_vc]);
       GuzzleController::setCaseVariable($request->id_case,"query_api_disp",['type' => "java.lang.String", "value" => $query_api_disp]);
-/*
-      $response = GuzzleController::requestBonita('POST','API/bpm/userTask/'.$request->id_tarea.'/execution',[]);
-      echo(var_dump($response));*/
+
+      #$response = GuzzleController::requestBonita('POST','API/bpm/userTask/'.$request->id_tarea.'/execution',[]);
+      #echo(var_dump($response));
 
       $response = GuzzleController::requestBonita('PUT','API/bpm/task/'.$request->id_tarea,['state' => 'completed']);
-
+      echo(var_dump($response));
     }
 
     public function posiblesAlternativas()
@@ -184,7 +187,7 @@ class GestionVCController extends Controller
         $id_participante2 = $this->getVariableValue($caseId,'id_participante2');
         $id_participante3 = $this->getVariableValue($caseId,'id_participante3');
 
-        $tipo_participante =
+     //   $tipo_participante =
 
       }
 
