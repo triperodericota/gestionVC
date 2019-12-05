@@ -19,3 +19,10 @@ Route::get('/solicitudVC','GestionVCController@solicitudVC');
 Route::get('/listaDeProcesos','GestionVCController@listaDeProcesos');
 Route::post('/solicitudVC','GestionVCController@enviarDatosSolicitudVC');
 Route::get('/posiblesAlternativas','GestionVCController@posiblesAlternativas');
+Route::get('/registrarSolicitudVC','GestionVCController@registrarSolicitudVC');
+
+Route::get('/inicioVC','GestionVCController@inicioVC');
+Route::post('/inicioVC','GestionVCController@enviarInicioVC');
+
+Route::get('/finalizarVC','GestionVCController@finalizarVC');
+Route::post('/finalizarVC','GestionVCController@enviarFinalizarVC');

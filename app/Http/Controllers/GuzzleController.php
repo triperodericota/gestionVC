@@ -13,7 +13,7 @@ class GuzzleController extends Controller
 {
     private static $user = 'root';
     private static $password = 'root';
-    private static $base_uri = 'http://172.27.0.1:47268/bonita/';
+    private static $base_uri = 'http://localhost:8080/bonita/';
 
     private static $cliente = null;
     private static $token = null;
