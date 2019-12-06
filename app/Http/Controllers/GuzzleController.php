@@ -11,20 +11,23 @@ use GuzzleHttp\Cookie\SessionCookieJar;
 
 class GuzzleController extends Controller
 {
-    private static $user = 'root';
-    private static $password = 'root';
-    private static $base_uri = 'http://localhost:8080/bonita/';
+#    private static $user = 'root';
+#    private static $password = 'root';
+#    private static $base_uri = 'http://localhost:8080/bonita/';
 
     private static $cliente = null;
     private static $token = null;
 
 	public static function getGuzzleClient(){
+           $base_uri = env('BONITA_URI', 'http://localhost:8080/bonita/'); 
+           $user = env('BONITA_USER', 'root');
+           $password = env('BONITA_PASSWORD', 'root');
         if(static::$cliente === null){
         	//Creo una cookie jar para almacenar las cookies que me va a devolver Bonita luego del request del loginservice
             $cookieJar = new SessionCookieJar('MiCookie', true);
             $gcliente = new Client([
                 // Base URI is used with relative requests
-                'base_uri' => static::$base_uri,
+                'base_uri' => $base_uri,
                 // Timeout en segundos
                 'timeout'  => 4.0,
                 'cookies' => $cookieJar
@@ -32,8 +35,8 @@ class GuzzleController extends Controller
 
             $resp = $gcliente->request('POST', 'loginservice', [
                 'form_params' => [
-                    'username' => static::$user,
-                    'password' => static::$password,
+                    'username' => $user,
+                    'password' => $password,
                     'redirect' => 'false'
                 ]
             ]);
