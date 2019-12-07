@@ -26,8 +26,8 @@
 
 
                               <div class="form-group">
-                                  <label for="finalizarEstado">Finalizar con estado:</label>
-                                  <select required class="form-control" id="finalizarEstado" name="finalizarEstado">
+                                  <label for="estadoFin">Finalizar con estado:</label>
+                                  <select required class="form-control" id="estadoFin" name="estadoFin">
                                         <option value="1" name="Suspendida">suspendida</option>
                                         <option value="2" name="Finalizada en termino">finalizada en termino</option>
                                         <option value="3" name="Finalizada con demora">finalizada con demora</option>
@@ -39,7 +39,7 @@
 
                               <div class="form-group">
                                 <label for="Comentarios">Comentarios de desarrollo y finalización</label>
-                                <textarea required class="form-control" id="ComFin" name="ComentariosFin" > </textarea>
+                                <textarea required class="form-control" id="ComFin" name="comentariosFin" > </textarea>
                               </div>
 
 
@@ -47,6 +47,8 @@
                             </div>
                             <!-- /.card-body -->
                             <input type="hidden" class="form-control" id="id_tarea" name="id_tarea" value="{{$idTarea ?? ''}}">
+                            <input type="hidden" class="form-control" id="id_vc" name="id_vc" value="{{$idVC}}">
+
                             @csrf
                             <div class="card-footer">
                               <button type="submit" class="btn btn-primary">Finalizar VC</button>

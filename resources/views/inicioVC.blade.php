@@ -26,8 +26,8 @@
 
 
                               <div class="form-group">
-                                  <label for="iniciarEstado">Iniciar con estado:</label>
-                                  <select required class="form-control" id="iniciarEstado" name="iniciarEstado">
+                                  <label for="participante1">Iniciar con estado:</label>
+                                  <select required class="form-control" id="estadoInicio" name="estadoInicio">
                                         <option value="1" name="Iniciada en termino">Iniciada en termino</option>
                                         <option value="2" name="Iniciada con demora">Iniciada con demora</option>
                                   </select>
@@ -42,7 +42,8 @@
 
                             </div>
                             <!-- /.card-body -->
-                            <input type="hidden" class="form-control" id="id_tarea" name="id_tarea" value="{{$idTarea ?? ''}}">
+                            <input type="hidden" class="form-control" id="id_tarea" name="id_tarea" value="{{$idTarea}}">
+                            <input type="hidden" class="form-control" id="id_vc" name="id_vc" value="{{$idVC}}">
                             @csrf
                             <div class="card-footer">
                               <button type="submit" class="btn btn-primary">Iniciar VC</button>

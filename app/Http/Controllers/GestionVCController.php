@@ -35,7 +35,7 @@ class GestionVCController extends Controller
       $actorId = $tarea->{"actorId"};
       $caseId = $tarea->{"caseId"};
       $userId = $tarea->{"assigned_id"};
-
+      $vc = $this->getVariableValue($caseId,'id_videoconferencia');
       /* sql para buscar unidades */
       $db = $this->getDB();
       $sql = $db->prepare('select id,nombre from unidades');
@@ -52,14 +52,14 @@ class GestionVCController extends Controller
           $users[$user->{'id'}]=$user;
         }
       }
-      return ['idTarea' => $idTarea, 'idActor' => $actorId, 'idCase' => $caseId, 'idUser' => $userId, 'unidades' => $unidades, 'participantes' => $users];
+      return ['idTarea' => $idTarea, 'idActor' => $actorId, 'idCase' => $caseId, 'idUser' => $userId, 'unidades' => $unidades, 'participantes' => $users, 'idVC' =>$vc];
     }
 
     public function solicitudVC(){
       if (isset($_GET['id'])) {
     		$idTarea = $_GET['id'];
-        $tarea = $this->obtenerTarea($idTarea);
-        $datosForm = $this->datosFormularioSolicitud($tarea);
+                $tarea = $this->obtenerTarea($idTarea);
+                $datosForm = $this->datosFormularioSolicitud($tarea);
     	} else {
     		$idTarea = "No se paso bien el id";
     	}
@@ -198,6 +198,7 @@ class GestionVCController extends Controller
       if(isset($_GET["activityId"])){
         $activityId = $_GET["activityId"];
         $response = GuzzleController::requestBonita('GET','API/bpm/activity/'.$activityId);
+	echo $response;
         $caseId = json_decode($response)->caseId;
 
         $fecha = $this->getVariableValue($caseId,'fecha');
@@ -230,6 +231,7 @@ class GestionVCController extends Controller
             'motivo' => $motivo, 'solicitante' => $id_db_solicitante]);
         GuzzleController::setCaseVariable($caseId,'id_videoconferencia',['type' => "java.lang.Integer", "value" => $id_videoconferencia]);
       }
+      #return json_encode("ok");
       //return view('registrarSolicitudVC');
     }
 
@@ -237,40 +239,82 @@ class GestionVCController extends Controller
       if (isset($_GET['id'])) {
     		$idTarea = $_GET['id'];
         $tarea = $this->obtenerTarea($idTarea);
-        echo(var_dump($tarea));
-        //$datosForm = $this->datosFormularioSolicitud($tarea);
-        /*$case = $tarea->{"caseId"};
-      	$vc = $this->getVariableValue($case,'id_videoconferencia');*/
+        #echo(var_dump($tarea));
+        $datosForm = $this->datosFormularioSolicitud($tarea);
+#        $case = $tarea->{"caseId"};
+#      	$vc = $this->getVariableValue($case,'id_videoconferencia');
       } else {
     		$idTarea = "No se paso bien el id";
 	    }
     	return view('inicioVC', $datosForm);
     }
 
-  /*  public function enviarInicioVC(Request $request){
+    public function enviarInicioVC(Request $request){
+/*       if (isset($_GET['id_vc'])) {
+    		$id_vc = $_GET['id_vc'];
       #if($request->id_solicitante == null){
         #$response = GuzzleController::requestBonita('GET','API/bpm/case/'.$request->id_case);
         #$id_solicitante = json_decode($response)->started_by;
       #}else{
         $id_solicitante = $request->id_solicitante;
-      #}
+      }
+		print_r($request->all());*/
 
 
-      $fecha = date('d/m/Y');
-      echo $fecha;
-      $hora = date("h:i:sa");
-      echo $hora;
-
+      $fecha = date('Y-m-d');
+      $hora = date("h:i:s");
+      $id_vc = $request->id_vc;
       $tarea =  $request->id_tarea;
-      echo $tarea;
-
+      $id_estado= $request->estadoInicio;
       $comentarios = $request->ComentariosInicio;
-      echo $comentarios;
 
+      DB::table('registro_videoconferencia')->insertGetId(
+            ['fecha' => $fecha, 'hora' => $hora, 'estado' => $id_estado, 'descripcion' => $comentarios , 'videoconferencia' => $id_vc]);
 
       $response = GuzzleController::requestBonita('PUT','API/bpm/task/'.$request->id_tarea,['state' => 'completed']);
       #:wecho(var_dump($response));
     }
-*/
+
+    public function finalizarVC(){
+      if (isset($_GET['id'])) {
+    		$idTarea = $_GET['id'];
+        $tarea = $this->obtenerTarea($idTarea);
+        #echo(var_dump($tarea));
+        $datosForm = $this->datosFormularioSolicitud($tarea);
+#        $case = $tarea->{"caseId"};
+#      	$vc = $this->getVariableValue($case,'id_videoconferencia');
+      } else {
+    		$idTarea = "No se paso bien el id";
+	    }
+    	return view('finalizarVC', $datosForm);
+    }
+
+    public function enviarFinalizarVC(Request $request){
+      $id_solicitante = $request->id_solicitante;
+      $comentarios = $request->comentariosFin;
+      $fecha = date('Y-m-d');
+      $hora = date("h:i:s");
+      $id_vc = $request->id_vc;
+      $tarea =  $request->id_tarea;
+      $id_estado= $request->estadoFin;
+      $comentarios=$request->comentariosFin;
+      DB::table('registro_videoconferencia')->insertGetId(
+            ['fecha' => $fecha, 'hora' => $hora, 'estado' => $id_estado, 'descripcion' => $comentarios , 'videoconferencia' => $id_vc]);
+
+
+      $response = GuzzleController::requestBonita('PUT','API/bpm/task/'.$request->id_tarea,['state' => 'completed']);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
