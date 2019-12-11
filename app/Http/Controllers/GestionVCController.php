@@ -49,10 +49,10 @@ class GestionVCController extends Controller
       $users = $this->obtenerUsuarios();
       foreach ($users as $user) {
         if(($user->{'job_title'} == 'Procurador') || ($user->{'job_title'} == 'Juez') || ($user->{'job_title'} == 'Abogado')) {
-          $users[$user->{'id'}]=$user;
+          $participantes[$user->{'id'}]=$user;
         }
       }
-      return ['idTarea' => $idTarea, 'idActor' => $actorId, 'idCase' => $caseId, 'idUser' => $userId, 'unidades' => $unidades, 'participantes' => $users, 'idVC' =>$vc];
+      return ['idTarea' => $idTarea, 'idActor' => $actorId, 'idCase' => $caseId, 'idUser' => $userId, 'unidades' => $unidades, 'participantes' => $participantes, 'idVC' =>$vc];
     }
 
     public function solicitudVC(){
@@ -66,8 +66,12 @@ class GestionVCController extends Controller
     	return view('solicitudVC', $datosForm);
     }
 
+
+
+
     private function obtenerTarea($id){
       $uri = 'API/bpm/task/'.$id;
+      #echo $uri;
       $response = GuzzleController::requestBonita('GET',$uri);
       $tarea = json_decode($response);
       return $tarea;
@@ -141,16 +145,21 @@ class GestionVCController extends Controller
         $caseId = $datosForm['idCase'];
         /* obtengo las posibles alternativas */
         $datosForm["alternativas"] = $this->getVariableValue($caseId,'api_alternativas');
+	$arreglo = json_decode($datosForm["alternativas"]);
+echo (var_dump($datosForm["alternativas"]));
+
+	echo (var_dump($arreglo));
+        $datosForm["alternativas"] = $arreglo;
         /*echo($datosForm["alternativas"]);*/
         $datosForm["id_unidad"] = $this->getVariableValue($caseId,'id_unidad');
-        $datosForm["id_interno"] = $this->getVariableValue($caseId,'id_interno');
-        $datosForm["motivo"] = $this->getVariableValue($caseId,'motivo');
+       # $datosForm["id_interno"] = $this->getVariableValue($caseId,'id_interno');
+      #  $datosForm["motivo"] = $this->getVariableValue($caseId,'motivo');
         $datosForm["fecha"] = $this->getVariableValue($caseId,'fecha');
         $datosForm["hora"] = $this->getVariableValue($caseId,'hora');
-        $datosForm["nro_casua"] = $this->getVariableValue($caseId,'nro_causa');
+     /*   $datosForm["nro_casua"] = $this->getVariableValue($caseId,'nro_causa');
         $datosForm["id_participante1"] = $this->getVariableValue($caseId,'id_participante1');
         $datosForm["id_participante2"] = $this->getVariableValue($caseId,'id_participante2');
-        $datosForm["id_participante3"] = $this->getVariableValue($caseId,'id_participante3');
+	$datosForm["id_participante3"] = $this->getVariableValue($caseId,'id_participante3');*/
     	} else {
     		  $idTarea = "No se paso bien el id";
     	}
@@ -158,6 +167,66 @@ class GestionVCController extends Controller
       return view('solicitudConAlternativas', $datosForm);
 
     }
+
+    public function enviarDatosAlternativos(Request $request){
+/*      if($request->id_solicitante == null){
+        $response = GuzzleController::requestBonita('GET','API/bpm/case/'.$request->id_case);
+        $id_solicitante = json_decode($response)->started_by;
+      }else{
+        $id_solicitante = $request->id_solicitante;
+      }
+
+      $response = GuzzleController::requestBonita('GET','API/identity/user/'.$id_solicitante.'?d=professional_data');
+      $solicitante = json_decode($response);
+      //determino si es videoconferencia o comparendo
+      if((isset($solicitante->{'job_title'})) && ($solicitante->{'job_title'} == 'Juez')){
+        $tipo_vc = "Comparendo";
+      }else{
+        $tipo_vc = "Entrevista";
+      }*/
+      $fecha = date('d/m/Y', strtotime($request->fecha));
+
+      #echo(var_dump($request));
+/*      $contrato = ['videoconferenciaInput' => [
+          'id_solicitante' => intval($request->id_solicitante),
+          'id_interno' => intval($request->id_interno),
+          'id_unidad' => intval($request->id_unidad),
+          'fecha' => $fecha,
+          'hora' => $request->hora,
+          'nro_causa' => intval($request->nro_causa),
+          'motivo' => $request->motivo,
+          'tipo_vc' => $tipo_vc,
+          'id_participante1' => $request->participante1,
+          'id_participante2' => $request->participante2,
+          'id_participante3' => $request->participante3,
+          ]];*/
+
+      /*$query_api_disp = array("date" => '"'.$fecha.'"', "time" => '"'.$request->hora.'"' ,"idUnidad" => '"'.$request->id_unidad.'"');
+      echo("QUERY = ".json_encode($query_api_disp));*/
+
+      // set variables
+      GuzzleController::setCaseVariable($request->id_case,'fecha',['type' => "java.lang.String", "value" => $fecha]);
+      GuzzleController::setCaseVariable($request->id_case,"hora",['type' => "java.lang.String", "value" => $request->hora]);
+    /*  GuzzleController::setCaseVariable($request->id_case,"id_interno",['type' => "java.lang.String", "value" => $request->id_interno]);
+      GuzzleController::setCaseVariable($request->id_case,"id_participante1",['type' => "java.lang.String", "value" => $request->participante1]);
+      GuzzleController::setCaseVariable($request->id_case,"id_participante2",['type' => "java.lang.String", "value" => $request->participante2]);
+      GuzzleController::setCaseVariable($request->id_case,"id_participante3",['type' => "java.lang.String", "value" => $request->participante3]);
+      GuzzleController::setCaseVariable($request->id_case,"id_solicitante",['type' => "java.lang.String", "value" => $id_solicitante]);
+      GuzzleController::setCaseVariable($request->id_case,"motivo",['type' => "java.lang.String", "value" => $request->motivo]); */
+      GuzzleController::setCaseVariable($request->id_case,"id_unidad",['type' => "java.lang.String", "value" => $request->id_unidad]);
+##      GuzzleController::setCaseVariable($request->id_case,"nro_causa",['type' => "java.lang.String", "value" => $request->nro_causa]);
+##      GuzzleController::setCaseVariable($request->id_case,"tipo_vc",['type' => "java.lang.String", "value" => $tipo_vc]);
+      /*GuzzleController::setCaseVariable($request->id_case,"query_api_disp",['type' => "java.lang.String", "value" => $query_api_disp]);
+*/
+      #$response = GuzzleController::requestBonita('POST','API/bpm/userTask/'.$request->id_tarea.'/execution',[]);
+      #echo(var_dump($response));
+
+      $response = GuzzleController::requestBonita('PUT','API/bpm/task/'.$request->id_tarea,['state' => 'completed']);
+      //echo(var_dump($response));
+    }
+
+
+
 
     private function getVariableValue($caseId,$varName){
       $variableJson = GuzzleController::requestBonita('GET','API/bpm/caseVariable/'.$caseId.'/'.$varName);;

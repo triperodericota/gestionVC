@@ -19,6 +19,8 @@ Route::get('/solicitudVC','GestionVCController@solicitudVC');
 Route::get('/listaDeProcesos','GestionVCController@listaDeProcesos');
 Route::post('/solicitudVC','GestionVCController@enviarDatosSolicitudVC');
 Route::get('/posiblesAlternativas','GestionVCController@posiblesAlternativas');
+Route::post('/posiblesAlternativas','GestionVCController@enviarDatosAlternativos');
+
 Route::get('/registrarSolicitudVC','GestionVCController@registrarSolicitudVC');
 
 Route::get('/inicioVC','GestionVCController@inicioVC');
