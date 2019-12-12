@@ -8,7 +8,6 @@
                   <!-- left column -->
                     <div>
                       <p> Id Task:  {{ $idTarea }} </p>
-                   <!--     <p> Alternativas: {{ $alternativas }}</p> -->
 
                         <!-- general form elements -->
                         <div class="card card-primary">
@@ -16,7 +15,47 @@
                             <h3 class="card-title">Solicitud de videoconferencia</h3>
                           </div>
                           <!-- /.card-header -->
-                          <!-- form start -->
+			  <!-- form start -->
+                                <table width="100%" class="table table-striped table-bordered table-hover" >
+                                <thead>
+                                <tr>
+                                     <th>Unidad</th>
+                                    <th>Distancia</th>
+                                    <th>Disponibilidad</th>
+                                           <th>Unidad</th>
+                                    <th>Distancia</th>
+                                    <th>Disponibilidad</th>
+         <th>Unidad</th>
+                                    <th>Distancia</th>
+                                    <th>Disponibilidad</th>
+
+
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+			  <?php #print_r($alternativas); 
+unset($alternativas[3]);
+foreach ($alternativas as $alt){
+	#print_r($alt);
+	echo "<td>";
+	$unidad=$alt["nombre"];
+	echo $unidad."</td>";
+        $dist=$alt["km_dist"];
+	echo "<td>".$dist."</td><td><table><tbody>";
+        $fechas = array_slice($alt["disponibilidad"],0,8);
+        foreach ($fechas as $fecha => $v){
+		$disp = $v=="true" ? "Si":"No";
+		echo "<tr><td>".$fecha."</td><td>".$disp."</td></tr>";
+        }
+	echo "</tbody></table></td>";
+
+}	
+
+
+
+
+?>
                           <form role="form" method="POST">
                             <div class="card-body">
                                <div class="form-group">
