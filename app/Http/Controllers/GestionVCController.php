@@ -135,6 +135,33 @@ class GestionVCController extends Controller
       //echo(var_dump($response));
     }
 
+    public function arregloAlternativas($line){
+      $line =  (preg_replace('/(\d{2}\/\d{2}\/\d{4}\-\d{2}\:\d{2})/', '"$1"', $line));
+$line =  (preg_replace('/id=/', '"id"=', $line));
+$line =  (preg_replace('/nombre=/', '"nombre"=', $line));
+$line =  (preg_replace('/numeroUnidad=/', '"numeroUnidad"=', $line));
+$line =  (preg_replace('/coordenadas=/', '"coordenadas"=', $line));
+$line =  (preg_replace('/email=/', '"email"=', $line));
+$line =  (preg_replace('/=(\S*)@(\S*\.\S*),/', '="$1@$2",', $line));
+
+$line =  (preg_replace('/lat=(\-?\d+(\.\d+)?),/', 'lat="$1",', $line));
+$line =  (preg_replace('/lat=/', '"lat"=', $line));
+$line =  (preg_replace('/lon=(\-?\d+(\.\d+)?),/', 'lon="$1",', $line));
+
+$line =  (preg_replace('/lon=/', '"lon"=', $line));
+$line =  (preg_replace('/km_dist=/', '"km_dist"=', $line));
+$line =  (preg_replace('/(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)/', '"$1,$3"', $line));
+
+$line =  (preg_replace('/=([a-z A-Z 0-9 ]*),/', '="$1",', $line));
+$line =  (preg_replace('/=(\w+)}/', '="$1"}', $line));
+$line =  (preg_replace('/disponibilidad=/', '"disponibilidad"=', $line));
+$line =  (preg_replace('/=/', ':', $line));
+      $arreglo=json_decode($line,true);
+      return $arreglo;
+
+    }
+
+
     public function posiblesAlternativas()
     {
       if(isset($_GET['id'])){
@@ -145,10 +172,10 @@ class GestionVCController extends Controller
         $caseId = $datosForm['idCase'];
         /* obtengo las posibles alternativas */
         $datosForm["alternativas"] = $this->getVariableValue($caseId,'api_alternativas');
-	$arreglo = json_decode($datosForm["alternativas"]);
-echo (var_dump($datosForm["alternativas"]));
-
-	echo (var_dump($arreglo));
+	$arreglo = $this->arregloAlternativas($datosForm["alternativas"]);
+#        echo (var_dump($datosForm["alternativas"]));
+#       echo (var_dump($arreglo));     
+#	echo (var_dump($arreglo));
         $datosForm["alternativas"] = $arreglo;
         /*echo($datosForm["alternativas"]);*/
         $datosForm["id_unidad"] = $this->getVariableValue($caseId,'id_unidad');
